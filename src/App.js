@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {getBusesForStop} from './utils/bustimeHelpers';
+import { getAllBusesForStop } from './utils/bustimeHelpers';
 
 class App extends Component {
   constructor(props) {
@@ -12,18 +12,21 @@ class App extends Component {
     };
   }
   componentDidMount() {
-    getBusesForStop().then((buses) => {
-      this.setState({buses})
-    })
+    // TODO: pass stops and buses
+    // const stopsAndBuses = {
+    //   '501138': ['Q20A', 'Q20B', encodeURIComponent('Q44+')]
+    // }
+    getAllBusesForStop().then((buses) => {
+      this.setState({buses})}
+    );
   }
 
   render() {
     let buses = this.state.buses.map((bus, index) => {
-      bus.arrival ? bus.arrival = Date(bus.arrival) : '';
+      // bus.arrival ? bus.arrival = Date(bus.arrival) : '';
       return (
         <li key={index}>
          <h3>{bus.name} — {bus.destination}</h3>
-         {bus.arrival ? <p>Arriving: {bus.arrival}</p>: ''}
          <p>{bus.distance}</p>
          <p>{bus.stopsAway} stops away</p>
         </li>
@@ -33,11 +36,8 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2>🚌 What bus should I take? 🚌</h2>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
         <ul>
           {buses}
         </ul>

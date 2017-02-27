@@ -1,40 +1,62 @@
 import axios from 'axios';
 
-function getBusesForStop() {
-  return axios.get(`http://bustime.mta.info/api/siri/stop-monitoring.json?key=3e9fe6cf-fedb-418a-91e3-ec84b6777e62&OperatorRef=MTA&MonitoringRef=501138&LineRef=MTA%20NYCT_Q20A`)
+function getBusesForStop(stopId, busLine) {
+  return axios.get(`http://bustime.mta.info/api/siri/stop-monitoring.json?key=3e9fe6cf-fedb-418a-91e3-ec84b6777e62&OperatorRef=MTA&MonitoringRef=${stopId}&LineRef=MTA%20NYCT_${busLine}`)
   .then(res => {
     let {
       "Siri": {
         "ServiceDelivery": {
           "StopMonitoringDelivery": [
-            { "MonitoredStopVisit": sup }
+            { "MonitoredStopVisit": busArr }
           ]
         }
       }
     } = res.data;
-    let arr = sup.map((obj) => {
-      let autobus = {};
-      ({
-        "MonitoredVehicleJourney": {
-          "DirectionRef": autobus.directionRef,
-          "PublishedLineName": autobus.name,
-          "DestinationName": autobus.destination,
-          "MonitoredCall": {
-            "ExpectedArrivalTime": autobus.arrival,
-            "ExpectedDepartureTime": autobus.departure,
-            "Extensions": {
-              "Distances": {
-                "PresentableDistance": autobus.distance,
-                "StopsFromCall": autobus.stopsAway
+    if (busArr) {
+      let buses = busArr.slice(0,2).map((obj) => {
+        let bus = {};
+        ({
+          "MonitoredVehicleJourney": {
+            "DirectionRef": bus.directionRef,
+            "PublishedLineName": bus.name,
+            "DestinationName": bus.destination,
+            "MonitoredCall": {
+              "ExpectedArrivalTime": bus.arrival,
+              "ExpectedDepartureTime": bus.departure,
+              "Extensions": {
+                "Distances": {
+                  "PresentableDistance": bus.distance,
+                  "StopsFromCall": bus.stopsAway
+                }
               }
             }
           }
-        }
-      } = obj)
-      return autobus;
-    });
-    return arr;
+        } = obj)
+        return bus;
+      });
+      return buses;
+    } else {
+      return [];
+    }
   })
 }
 
-export {getBusesForStop};
+function getAllBusesForStop(stopsAndBuses) {
+  // TODO: no hardcoding :p
+  let arrOfBusCalls = [
+    getBusesForStop('552957', 'Q34'),
+    getBusesForStop('551015', 'Q25'),
+    getBusesForStop('551015', 'Q50'),
+    getBusesForStop('501138', 'Q20A'),
+    getBusesForStop('501138', 'Q20B'),
+    getBusesForStop('501138', 'Q44%2B'),
+    getBusesForStop('501311', 'Q16'),
+  ]
+
+  return axios.all(arrOfBusCalls)
+  .then(axios.spread(function (...calls) {
+    return [].concat(...calls);
+  }))
+}
+
+export {getBusesForStop, getAllBusesForStop};
