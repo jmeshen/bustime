@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { getAllBusesForStop } from './utils/bustimeHelpers';
 
@@ -35,8 +34,8 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
           <h2>🚌 What bus should I take? 🚌</h2>
+          <p>🚧 work in progress 🚧</p>
         </div>
         <ul>
           {buses}

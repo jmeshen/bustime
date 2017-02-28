@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 function getBusesForStop(stopId, busLine) {
-  return axios.get(`http://bustime.mta.info/api/siri/stop-monitoring.json?key=3e9fe6cf-fedb-418a-91e3-ec84b6777e62&OperatorRef=MTA&MonitoringRef=${stopId}&LineRef=MTA%20NYCT_${busLine}`)
+  return axios.get(`https://bustime-api.herokuapp.com/buses/${stopId}/${encodeURIComponent(busLine)}`)
   .then(res => {
     let {
       "Siri": {
@@ -49,7 +49,7 @@ function getAllBusesForStop(stopsAndBuses) {
     getBusesForStop('551015', 'Q50'),
     getBusesForStop('501138', 'Q20A'),
     getBusesForStop('501138', 'Q20B'),
-    getBusesForStop('501138', 'Q44%2B'),
+    getBusesForStop('501138', 'Q44+'),
     getBusesForStop('501311', 'Q16'),
   ]
 
